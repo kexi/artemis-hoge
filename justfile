@@ -30,6 +30,22 @@ start-expo:
 test-android:
     uv run --locked python scripts/test-android.py
 
+# LM Studio 専用の Artemis をポート 8001 で起動する
+start-lmstudio:
+    uv run --locked python scripts/start-lmstudio.py
+
+# スクリーンショットで LM Studio の画像入力とツール呼び出しを検証する
+probe-lmstudio screenshot:
+    uv run --locked python scripts/probe-lmstudio.py "{{ screenshot }}"
+
+# LM Studio の Gemma 4 で同じ実機テストを実行する
+test-lmstudio:
+    ARTEMIS_BASE_URL=http://localhost:8001 ARTEMIS_TEST_TIMEOUT=1800 uv run --locked python scripts/test-android.py
+
+# 指定した旧タスクの停止を待ち、Flash の3段階テストを実行する
+test-lmstudio-flash stop_task="":
+    ARTEMIS_BASE_URL=http://localhost:8001 ARTEMIS_STOP_TASK="{{ stop_task }}" ARTEMIS_TEST_TIMEOUT=300 uv run --locked python scripts/test-flash.py
+
 # 型・静的解析・整形・シークレットを検査する
 check-project:
     pnpm typecheck

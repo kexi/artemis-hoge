@@ -68,7 +68,9 @@ async def main() -> None:
             locked_app_package=PACKAGE,
         )
         try:
-            result = await client.wait_for_task(task_id, timeout=600)
+            result = await client.wait_for_task(
+                task_id, timeout=float(os.environ.get("ARTEMIS_TEST_TIMEOUT", "600"))
+            )
         except (TaskTimeoutError, asyncio.CancelledError):
             await client.stop(task_id)
             raise

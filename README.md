@@ -95,6 +95,72 @@ Artemis は `pro` / `strict` で各項目を検証する。
 接続エラーは Artemis サーバー、端末 ID、USB デバッグを確認する。
 アプリの読み込みエラーは Metro と `adb reverse`、モデルエラーは Artemis 側の認証・モデル設定を確認する。
 
+## LM Studio の Gemma 4 で実験する
+
+LM Studio の CLI `lms` が利用できる環境で、MLX 版のモデルを取得してロードする。
+26B-A4B・4bit 版は約15.6GB。初回はダウンロードに時間がかかる。
+
+```sh
+lms get https://huggingface.co/lmstudio-community/gemma-4-26B-A4B-it-MLX-4bit --mlx --yes
+lms ls
+```
+
+`lms ls` に表示されたモデルキーを使い、API で使う別名を `artemis-gemma4` にする。
+
+```sh
+lms load <model-key> --identifier artemis-gemma4 --context-length 65536 --gpu max --yes
+lms server start --bind 127.0.0.1 --port 1234
+just start-lmstudio
+```
+
+管理画面は `http://localhost:8001`。別ターミナルで実行する。
+
+前回成功したテストの `screen.png` があれば、先に画像の読み取りとツール呼び出しだけを確認できる。
+
+```sh
+just probe-lmstudio artifacts/<trace-id>/screen.png
+```
+
+この事前確認は「Artemis Todo」「タスク1件」「完了1件」の画面を入力する。
+推論結果は `artifacts/lmstudio-probe.json` に保存する。
+
+```sh
+just test-lmstudio
+```
+
+Gemini で行ったものと同じ `pro` / `strict` のシナリオ・判定を使う。
+ローカル推論向けにタスクの制限時間だけ30分へ延ばしている。
+結果は通常と同じ `artifacts/<trace-id>/`、Artemis 本体のログは `artifacts/lmstudio/traces/` に保存する。
+
+Pro が計画編集を繰り返して進まない場合は、同じモデルで Flash を試せる。
+
+```sh
+just test-lmstudio-flash
+```
+
+実行中のタスクを切り替える場合は、そのタスク ID を引数に指定する。
+停止完了と端末の解放を待ってから Flash を開始する。
+
+```sh
+just test-lmstudio-flash <running-task-id>
+```
+
+Flash はリセット・追加・完了を別々のタスクとして実行し、各段階の UI ツリーを Python で検証する。
+空欄時の追加無効、未完了の `Buy milk` 1件、完了済み1件を順に確認し、すべて一致した場合だけ合格にする。
+Pro の Checker による検証台帳は使わない。制限時間は各段階5分。
+結果は `artifacts/<run-id>/run.json`、段階ごとの結果・画面は同ディレクトリ内に保存する。
+
+`scripts/start-lmstudio.py` は実験専用の全ノード設定を生成し、Artemis 本体をポート 8001 で起動する。
+上流のソースは変更しない。Gemini を直接指定する要約処理が残っているため、
+`scripts/lmstudio-runtime/sitecustomize.py` をこのプロセスと子プロセスだけに読み込ませ、
+モデル生成を LM Studio の OpenAI 互換 API に統一する。
+クラウド用キーを空にし、モデルの接続先はループバックアドレスだけを許可する。
+接続先とモデルは `local_model_route` ログで確認できる。
+
+別のモデルをロードする場合は `.env` の `LMSTUDIO_MODEL` に API のモデル ID を設定する。
+LM Studio 側で認証を有効にした場合だけ `LMSTUDIO_API_TOKEN` を設定する。
+この互換処理は固定した Artemis のバージョン向けの実験実装であり、モデル変更時には再検証する。
+
 ## 開発チェック
 
 ```sh
