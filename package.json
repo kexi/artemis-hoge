@@ -1,0 +1,29 @@
+{
+  "name": "artemis-hoge",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "start": "expo start --localhost",
+    "android": "expo run:android --device",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint App.tsx index.ts",
+    "format": "oxfmt App.tsx index.ts package.json tsconfig.json app.json",
+    "format:check": "oxfmt --check App.tsx index.ts package.json tsconfig.json app.json"
+  },
+  "dependencies": {
+    "expo": "~58.0.14",
+    "expo-status-bar": "~58.0.3",
+    "react": "19.3.0",
+    "react-native": "0.88.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.3.0",
+    "only-allow": "^1.2.1",
+    "oxfmt": "0.73.0",
+    "oxlint": "1.88.0",
+    "typescript": "~6.0.3"
+  },
+  "packageManager": "pnpm@10.32.1"
+}

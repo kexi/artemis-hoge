@@ -1,0 +1,13 @@
+node_modules/
+.expo/
+dist/
+android/
+ios/
+.env
+.env.local
+.venv/
+.direnv/
+__pycache__/
+.ruff_cache/
+.pytest_cache/
+artifacts/

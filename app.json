@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "Artemis Todo",
+    "slug": "artemis-hoge",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "artemis-hoge",
+    "userInterfaceStyle": "light",
+    "android": { "package": "dev.kexi.artemishoge" },
+    "ios": { "bundleIdentifier": "dev.kexi.artemishoge" }
+  }
+}

@@ -1,0 +1,18 @@
+[project]
+name = "artemis-expo-smoke"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "artemis-client @ git+https://github.com/google/artemis.git@351ca8422f7b5b54e80a9c1ce03a222e02415b6b#subdirectory=packages/artemis-client",
+]
+
+[dependency-groups]
+dev = ["ruff>=0.15.2", "pytest>=8.4"]
+
+[tool.uv]
+package = false
+exclude-newer = "1 day"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100

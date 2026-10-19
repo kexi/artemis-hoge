@@ -1,0 +1,8 @@
+pre-commit:
+  commands:
+    check-project:
+      run: just check-project
+    check-actions:
+      run: pinact run --check && actionlint
+    check-formatting:
+      run: nix flake check
